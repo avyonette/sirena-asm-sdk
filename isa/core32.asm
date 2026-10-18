@@ -1,0 +1,58 @@
+#include "../cpu/reg.asm"
+#include "addr.asm"
+
+; R: `8ff `5rb `5ra `5ds `5op `4s
+; I: `2ff `16vl `5ds `5op `4os
+; J: `5rc `18tg `5op `4os
+
+#ruledef {
+	nop => 0x00 @ 0x00 @ 0x00 @ 0x00
+	cpuid {ds: reg} => $le(0x00`8 @ 0x00`5 @ 0x00`5 @ ds @ 0x01`5 @ 0`4)
+	ldw {ds: reg}, {ra: reg} => $le(0x00`8 @ 0x00`5 @ ra @ ds @ 0x02`5 @ 0`4)
+	ldhz {ds: reg}, {ra: reg} => $le(0x01`8 @ 0x00`5 @ ra @ ds @ 0x02`5 @ 0`4)
+	ldhs {ds: reg}, {ra: reg} => $le(0x02`8 @ 0x00`5 @ ra @ ds @ 0x02`5 @ 0`4)
+	ldbz {ds: reg}, {ra: reg} => $le(0x03`8 @ 0x00`5 @ ra @ ds @ 0x02`5 @ 0`4)
+	ldbs {ds: reg}, {ra: reg} => $le(0x04`8 @ 0x00`5 @ ra @ ds @ 0x02`5 @ 0`4)
+	lvi {ds: reg}, {vl: s16} => $le(0x00`2 @ vl @ ds @ 0x03`5 @ 0`4)
+	lli {ds: reg}, {vl: u16} => $le(0x00`2 @ vl @ ds @ 0x04`5 @ 0`4)
+	lui {ds: reg}, {vl: u16} => $le(0x01`2 @ vl @ ds @ 0x04`5 @ 0`4)
+	stw {ds: reg}, {ra: reg} => $le(0x00`8 @ 0x00`5 @ ra @ ds @ 0x05`5 @ 0`4)
+	sth {ds: reg}, {ra: reg} => $le(0x01`8 @ 0x00`5 @ ra @ ds @ 0x05`5 @ 0`4)
+	stb {ds: reg}, {ra: reg} => $le(0x02`8 @ 0x00`5 @ ra @ ds @ 0x05`5 @ 0`4)
+	mov {ds: reg}, {ra: reg} => $le(0x00`8 @ 0x00`5 @ ra @ ds @ 0x06`5 @ 0`4)
+	ja {ds: reg} => $le(0x00`8 @ 0x00`5 @ 0x00`5 @ ds @ 0x07`5 @ 0`4)
+	jae {ds: reg}, {ra: reg} => $le(0x00`8 @ 0x00`5 @ ra @ ds @ 0x08`5 @ 0`4)
+	jane {ds: reg}, {ra: reg} => $le(0x01`8 @ 0x00`5 @ ra @ ds @ 0x08`5 @ 0`4)
+	jalt {ds: reg}, {ra: reg} => $le(0x02`8 @ 0x00`5 @ ra @ ds @ 0x08`5 @ 0`4)
+	jage {ds: reg}, {ra: reg} => $le(0x04`8 @ 0x00`5 @ ra @ ds @ 0x08`5 @ 0`4)
+	jr {tg: reladdr18} => $le(0x00`5 @ tg @ 0x09`5 @ 0x00`4)
+	jre {tg: reladdr18}, {rc: reg} => $le(rc @ tg @ 0x0A`5 @ 0`4)
+	jrne {tg: reladdr18}, {rc: reg} => $le(rc @ tg @ 0x0B`5 @ 0`4)
+	jrlt {tg: reladdr18}, {rc: reg} => $le(rc @ tg @ 0x0C`5 @ 0`4)
+	jrge {tg: reladdr18}, {rc: reg} => $le(rc @ tg @ 0x0E`5 @ 0`4)
+	calla {ds: reg} => $le(0x00`8 @ 0x00`5 @ 0x00`5 @ ds @ 0x10`5 @ 0`4)
+	callr {tg: reladdr18} => $le(0x00`5 @ tg @ 0x11`5 @ 0`4)
+	ret => $le(0x00`8 @ 0x00`5 @ 0x00`5 @ 0x00`5 @ 0x12`5 @ 0`4)
+	cmpu {ds: reg}, {ra: reg}, {rb: reg} => $le(0x00`8 @ rb @ ra @ ds @ 0x13`5 @ 0`4)
+	cmps {ds: reg}, {ra: reg}, {rb: reg} => $le(0x01`8 @ rb @ ra @ ds @ 0x13`5 @ 0`4)
+	add {ds: reg}, {ra: reg}, {rb: reg} => $le(0x00`8 @ rb @ ra @ ds @ 0x14`5 @ 0`4)
+	sub {ds: reg}, {ra: reg}, {rb: reg} => $le(0x01`8 @ rb @ ra @ ds @ 0x14`5 @ 0`4)
+	addi {ds: reg}, {vl: s16} => $le(0x00`2 @ vl @ ds @ 0x15`5 @ 0`4)
+	mul {ds: reg}, {ra: reg}, {rb: reg} => $le(0x00`8 @ rb @ ra @ ds @ 0x16`5 @ 0`4)
+	and {ds: reg}, {ra: reg}, {rb: reg} => $le(0x00`8 @ rb @ ra @ ds @ 0x17`5 @ 0`4)
+	or {ds: reg}, {ra: reg}, {rb: reg} => $le(0x01`8 @ rb @ ra @ ds @ 0x17`5 @ 0`4)
+	xor {ds: reg}, {ra: reg}, {rb: reg} => $le(0x02`8 @ rb @ ra @ ds @ 0x17`5 @ 0`4)
+	shl {ds: reg}, {ra: reg}, {rb: reg} => $le(0x00`8 @ rb @ ra @ ds @ 0x18`5 @ 0`4)
+	shr {ds: reg}, {ra: reg}, {rb: reg} => $le(0x01`8 @ rb @ ra @ ds @ 0x18`5 @ 0`4)
+	shsr {ds: reg}, {ra: reg}, {rb: reg} => $le(0x02`8 @ rb @ ra @ ds @ 0x18`5 @ 0`4)
+	shli {ds: reg}, {vl: s16} => $le(0x00`2 @ vl @ ds @ 0x19`5 @ 0`4)
+	shri {ds: reg}, {vl: s16} => $le(0x01`2 @ vl @ ds @ 0x19`5 @ 0`4)
+	shsri {ds: reg}, {vl: s16} => $le(0x02`2 @ vl @ ds @ 0x19`5 @ 0`4)
+	int {ds: reg} => $le(0x00`8 @ 0x00`5 @ 0x00`5 @ ds @ 0x1A`5 @ 0`4)
+	inti {tg: u8} => $le(0x00`2 @ tg`16 @ 0x00`5 @ 0x1B`5 @ 0`4)
+	intm {ds: reg}, {vl: u1} => $le(0x00`2 @ vl`16 @ ds @ 0x1C`5 @ 0`4)
+	reti => $le(0x00`8 @ 0x00`5 @ 0x00`5 @ 0x00`5 @ 0x1D`5 @ 0`4)
+	mcw {ds: reg}, {ra: reg} => $le(0x00`8 @ 0x00`5 @ ra @ ds @ 0x1E`5 @ 0`4)
+	mch {ds: reg}, {ra: reg} => $le(0x01`8 @ 0x00`5 @ ra @ ds @ 0x1E`5 @ 0`4)
+	mcb {ds: reg}, {ra: reg} => $le(0x02`8 @ 0x00`5 @ ra @ ds @ 0x1E`5 @ 0`4)
+}
