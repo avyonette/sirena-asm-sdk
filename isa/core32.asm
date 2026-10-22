@@ -7,7 +7,8 @@
 
 #ruledef {
 	nop => 0x00 @ 0x00 @ 0x00 @ 0x00
-	cpuid {ds: reg} => $le(0x00`8 @ 0x00`5 @ 0x00`5 @ ds @ 0x01`5 @ 0`4)
+	cpuid {ds: reg} => $le(0x00`2 @ 0x00`16 @ ds @ 0x01`5 @ 0`4)
+	cpuft {ds: reg, vl: u16} => $le(0x01`2 @ vl @ ds @ 0x01`5 @ 0`4)
 	ldw {ds: reg}, {ra: reg} => $le(0x00`8 @ 0x00`5 @ ra @ ds @ 0x02`5 @ 0`4)
 	ldhz {ds: reg}, {ra: reg} => $le(0x01`8 @ 0x00`5 @ ra @ ds @ 0x02`5 @ 0`4)
 	ldhs {ds: reg}, {ra: reg} => $le(0x02`8 @ 0x00`5 @ ra @ ds @ 0x02`5 @ 0`4)
