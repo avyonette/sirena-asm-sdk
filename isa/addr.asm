@@ -1,6 +1,6 @@
 #subruledef reladdr18 {
-	{addr: u18} => {
-		reladdr = addr - $
+	{addr: s18} => {
+		reladdr = addr - $ + 4
 		reladdr`18
 	}
 }
